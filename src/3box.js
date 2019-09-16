@@ -364,6 +364,11 @@ class Box {
    */
   async linkAddress (link = {}) {
     if (link.proof) {
+      try {
+        await utils.recoverPersonalSign(link.proof.message, link.proof.signature)
+      } catch (err) {
+        throw new Error('There was an issue verifying the supplied proof: ', err)
+      }
       await this._writeRootstoreEntry(Replicator.entryTypes.ADDRESS_LINK, link.proof)
       return
     }
